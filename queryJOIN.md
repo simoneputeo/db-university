@@ -94,5 +94,25 @@ ORDER BY uni.teachers.surname;
 7. BONUS: Selezionare per ogni studente il numero di tentativi sostenuti per ogni esame, stampando anche il voto massimo. Successivamente, filtrare i tentativi con voto minimo 18.
 
 ```sql
-
+SELECT
+uni.students.surname,
+uni.students.name,
+uni.students.registration_number,
+uni.courses.name,
+uni.exams.date,
+uni.exams.hour,
+uni.exams.location,
+uni.exam_student.vote,
+COUNT(*) OVER (PARTITION BY uni.students.id, uni.courses.id) AS attempts,
+MAX(uni.exam_student.vote) OVER (PARTITION BY uni.students.id, uni.courses.id) AS maximum_vote
+FROM uni.students
+INNER JOIN uni.exam_student
+ON uni.students.id = uni.exam_student.student_id
+INNER JOIN uni.exams
+ON uni.exam_student.exam_id = uni.exams.id
+INNER JOIN uni.courses
+ON uni.exams.course_id = uni.courses.id
+WHERE uni.exam_student.vote > 17
+ORDER BY uni.students.surname, uni.students.name, uni.exams.date
+;
 ```
